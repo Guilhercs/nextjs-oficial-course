@@ -1,4 +1,21 @@
-"use server";
+("use server");
+
+import { z } from "zod";
+import postgres from "postgres";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
+
+const FormSchema = z.object({
+  id: z.string(),
+  customerId: z.string(),
+  amount: z.coerce.number(),
+  status: z.enum(["pending", "paid"]),
+  date: z.string(),
+});
+
+const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
 import { z } from "zod";
 import postgres from "postgres";
